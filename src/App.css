@@ -1,0 +1,7 @@
+.wrapper {
+  /* background-color: #1d1160;
+  color: whitesmoke; */
+  background-image: linear-gradient(to right, #a8edea 0%, #fed6e3 100%);
+  /* color: whitesmoke; */
+  min-height: 100vh;
+}
