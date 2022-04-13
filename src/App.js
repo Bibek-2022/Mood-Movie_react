@@ -1,24 +1,53 @@
-import "./App.css";
+import { useEffect } from "react";
+import { useState } from "react";
 import { Container } from "react-bootstrap";
-import { Title } from "./components/Title";
-import { SearchForm } from "./components/search-form/SearchForm";
-import { CustomeCard } from "./components/card/CustomeCard";
-import { MovieList } from "./components/movie-list/MovieList";
-import { fetchMovie } from "./helper/axiosHelper";
+import "./App.css";
+import { CustomCard } from "./Components/card/CustomCard";
+import { SearchForm } from "./Components/form/SearchForm";
+import { MovieList } from "./Components/movie-list/MovieList";
+import { Title } from "./Components/Title";
+
+import { fetchMovie } from "./Helper/axiosHelper";
+import { RandomGenerator } from "./Helper/randomGenerator";
 
 function App() {
+  const [movieList, setList] = useState({});
+  const [movieLists, setMovieLists] = useState([]);
+
+  useEffect(() => {
+    const char = RandomGenerator();
+    getMovie(char);
+  }, []);
+
   const getMovie = async (search) => {
     const { data } = await fetchMovie(search);
-    console.log(data);
+    setList(data);
   };
+
+  const addToMovieList = (type) => {
+    // const mv = { ...movieList, cat: type };
+    setMovieLists([...movieLists, { ...movieList, cat: type }]);
+    setList({});
+  };
+
+  const handelOnDelete = (imdbID) => {
+    const filterFromList = movieLists.filter(
+      (movie, i) => movie.imdbID !== imdbID
+    );
+    setMovieLists(filterFromList);
+  };
+
   return (
     <div className="wrapper">
       <Container>
         <Title />
         <SearchForm getMovie={getMovie} />
-        <CustomeCard />
+        {movieList?.imdbID && (
+          <CustomCard movieObj={movieList} func={addToMovieList} />
+        )}
+
         <hr />
-        <MovieList />
+        <MovieList movieLists={movieLists} handelOnDelete={handelOnDelete} />
       </Container>
     </div>
   );
